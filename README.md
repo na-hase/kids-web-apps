@@ -4,6 +4,7 @@
 
 - `/dobutsu-touch/` — どうぶつタッチ
 - `/ponpon-touch/` — ぽんぽんタッチ
+- `/piano-touch/` — ピアノタッチ
 
 ## Cloudflare Pages
 

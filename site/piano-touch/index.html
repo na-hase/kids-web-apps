@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#171719">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ピアノタッチ">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>ピアノタッチ</title>
+<style>
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:#171719;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+body{position:fixed;inset:0}
+#piano{position:absolute;inset:0;background:#171719;touch-action:none;overflow:hidden}
+.white-keys{position:absolute;inset:0;display:flex;z-index:1}
+.key{touch-action:none;-webkit-tap-highlight-color:transparent}
+.white{position:relative;flex:1 1 12.5%;height:100%;border:0;border-right:1px solid #777;border-bottom:1px solid #555;background:linear-gradient(90deg,#f5f5f2 0%,#fff 14%,#fbfbf8 70%,#e6e6e1 100%);box-shadow:inset 0 -10px 18px rgba(0,0,0,.10)}
+.white:first-child{border-left:1px solid #777}
+.white.pressed{background:linear-gradient(180deg,#dfeaf2 0%,#f7fbff 62%,#cfdbe3 100%);box-shadow:inset 0 10px 22px rgba(0,0,0,.12)}
+.black{position:absolute;top:0;height:61%;width:8.4%;z-index:3;border:0;border-radius:0 0 7px 7px;background:linear-gradient(90deg,#111 0%,#333 28%,#171719 72%,#050506 100%);box-shadow:0 7px 8px rgba(0,0,0,.38),inset 0 -9px 8px rgba(255,255,255,.05);transform:translateX(-50%)}
+.black.pressed{background:linear-gradient(90deg,#24272a 0%,#555b61 34%,#262a2e 70%,#111 100%);box-shadow:0 3px 5px rgba(0,0,0,.45),inset 0 -5px 6px rgba(255,255,255,.06)}
+.b1{left:12.5%}.b2{left:25%}.b3{left:50%}.b4{left:62.5%}.b5{left:75%}
+</style>
+</head>
+<body>
+<main id="piano" aria-label="ピアノ鍵盤">
+  <div class="white-keys">
+    <button class="key white" type="button" data-midi="60" aria-label="ド"></button>
+    <button class="key white" type="button" data-midi="62" aria-label="レ"></button>
+    <button class="key white" type="button" data-midi="64" aria-label="ミ"></button>
+    <button class="key white" type="button" data-midi="65" aria-label="ファ"></button>
+    <button class="key white" type="button" data-midi="67" aria-label="ソ"></button>
+    <button class="key white" type="button" data-midi="69" aria-label="ラ"></button>
+    <button class="key white" type="button" data-midi="71" aria-label="シ"></button>
+    <button class="key white" type="button" data-midi="72" aria-label="ド"></button>
+  </div>
+  <button class="key black b1" type="button" data-midi="61" aria-label="ドのシャープ"></button>
+  <button class="key black b2" type="button" data-midi="63" aria-label="レのシャープ"></button>
+  <button class="key black b3" type="button" data-midi="66" aria-label="ファのシャープ"></button>
+  <button class="key black b4" type="button" data-midi="68" aria-label="ソのシャープ"></button>
+  <button class="key black b5" type="button" data-midi="70" aria-label="ラのシャープ"></button>
+</main>
+<script>
+(()=>{
+  const piano=document.getElementById('piano');
+  const pointerNotes=new Map();
+  const activeVoices=new Map();
+  let audioCtx=null;
+  let master=null;
+
+  function ensureAudio(){
+    if(!audioCtx){
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      audioCtx=new AudioCtx();
+      const compressor=audioCtx.createDynamicsCompressor();
+      compressor.threshold.value=-12;
+      compressor.knee.value=18;
+      compressor.ratio.value=4;
+      compressor.attack.value=.003;
+      compressor.release.value=.22;
+      master=audioCtx.createGain();
+      master.gain.value=.82;
+      master.connect(compressor);
+      compressor.connect(audioCtx.destination);
+      try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(_){ }
+    }
+    if(audioCtx.state==='suspended') audioCtx.resume();
+  }
+
+  function midiToHz(midi){ return 440*Math.pow(2,(midi-69)/12); }
+
+  function startVoice(midi){
+    ensureAudio();
+    if(!audioCtx||!master) return;
+    stopVoice(midi,.05);
+
+    const now=audioCtx.currentTime;
+    const freq=midiToHz(midi);
+    const bus=audioCtx.createGain();
+    const filter=audioCtx.createBiquadFilter();
+    filter.type='lowpass';
+    filter.frequency.setValueAtTime(Math.min(7000,4200+freq*2.5),now);
+    filter.Q.value=.55;
+    bus.connect(filter);
+    filter.connect(master);
+
+    bus.gain.setValueAtTime(.0001,now);
+    bus.gain.exponentialRampToValueAtTime(.95,now+.006);
+    bus.gain.exponentialRampToValueAtTime(.42,now+.11);
+    bus.gain.exponentialRampToValueAtTime(.18,now+.85);
+    bus.gain.exponentialRampToValueAtTime(.0008,now+4.2);
+
+    const partials=[
+      {m:1,g:.48,d:-2.1},{m:1,g:.48,d:2.1},
+      {m:2,g:.18,d:-.7},{m:3,g:.085,d:.5},{m:4,g:.04,d:0},{m:5,g:.018,d:0}
+    ];
+    const oscs=[];
+    for(const p of partials){
+      const osc=audioCtx.createOscillator();
+      const g=audioCtx.createGain();
+      osc.type='sine';
+      osc.frequency.value=freq*p.m;
+      osc.detune.value=p.d;
+      g.gain.value=p.g;
+      osc.connect(g);
+      g.connect(bus);
+      osc.start(now);
+      osc.stop(now+4.4);
+      oscs.push(osc);
+    }
+
+    const noiseBuffer=audioCtx.createBuffer(1,Math.max(1,Math.floor(audioCtx.sampleRate*.025)),audioCtx.sampleRate);
+    const data=noiseBuffer.getChannelData(0);
+    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1-i/data.length);
+    const noise=audioCtx.createBufferSource();
+    noise.buffer=noiseBuffer;
+    const hp=audioCtx.createBiquadFilter();
+    hp.type='highpass';
+    hp.frequency.value=1300;
+    const ng=audioCtx.createGain();
+    ng.gain.setValueAtTime(.05,now);
+    ng.gain.exponentialRampToValueAtTime(.0001,now+.028);
+    noise.connect(hp); hp.connect(ng); ng.connect(master);
+    noise.start(now); noise.stop(now+.03);
+
+    const voice={bus,filter,oscs,noise,stopped:false,cleanup:null};
+    voice.cleanup=setTimeout(()=>{
+      if(activeVoices.get(midi)===voice) activeVoices.delete(midi);
+      try{bus.disconnect();filter.disconnect();}catch(_){ }
+    },4600);
+    activeVoices.set(midi,voice);
+  }
+
+  function stopVoice(midi,release=.26){
+    const voice=activeVoices.get(midi);
+    if(!voice||voice.stopped||!audioCtx) return;
+    voice.stopped=true;
+    const now=audioCtx.currentTime;
+    const end=now+release;
+    try{
+      voice.bus.gain.cancelScheduledValues(now);
+      voice.bus.gain.setValueAtTime(Math.max(.0001,voice.bus.gain.value),now);
+      voice.bus.gain.exponentialRampToValueAtTime(.0001,end);
+      for(const osc of voice.oscs){ try{osc.stop(end+.03);}catch(_){ } }
+    }catch(_){ }
+    setTimeout(()=>{
+      if(activeVoices.get(midi)===voice) activeVoices.delete(midi);
+      if(voice.cleanup) clearTimeout(voice.cleanup);
+      try{voice.bus.disconnect();voice.filter.disconnect();}catch(_){ }
+    },Math.ceil((release+.08)*1000));
+  }
+
+  function keyAt(x,y){
+    const el=document.elementFromPoint(x,y);
+    return el&&el.closest?el.closest('.key'):null;
+  }
+
+  function setPointerKey(pointerId,key){
+    const prev=pointerNotes.get(pointerId);
+    if(prev===key) return;
+    if(prev){
+      prev.classList.remove('pressed');
+      stopVoice(Number(prev.dataset.midi));
+    }
+    if(key){
+      pointerNotes.set(pointerId,key);
+      key.classList.add('pressed');
+      startVoice(Number(key.dataset.midi));
+    }else{
+      pointerNotes.delete(pointerId);
+    }
+  }
+
+  piano.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    ensureAudio();
+    try{piano.setPointerCapture(e.pointerId);}catch(_){ }
+    setPointerKey(e.pointerId,keyAt(e.clientX,e.clientY));
+  });
+  piano.addEventListener('pointermove',e=>{
+    if(!pointerNotes.has(e.pointerId)) return;
+    e.preventDefault();
+    setPointerKey(e.pointerId,keyAt(e.clientX,e.clientY));
+  });
+  function endPointer(e){
+    const key=pointerNotes.get(e.pointerId);
+    if(key){
+      key.classList.remove('pressed');
+      stopVoice(Number(key.dataset.midi));
+      pointerNotes.delete(e.pointerId);
+    }
+  }
+  piano.addEventListener('pointerup',endPointer);
+  piano.addEventListener('pointercancel',endPointer);
+  piano.addEventListener('lostpointercapture',endPointer);
+  document.addEventListener('contextmenu',e=>e.preventDefault());
+})();
+</script>
+</body>
+</html>
