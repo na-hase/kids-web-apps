@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+  <meta name="theme-color" content="#fff8ef" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="ぽんぽんタッチ" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <title>ぽんぽんタッチ</title>
+  <style>
+    :root {
+      --bg1: #fff9f1;
+      --bg2: #f3fbff;
+      --ink: #243044;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      overscroll-behavior: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: none;
+      background: var(--bg1);
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+    }
+
+    #playground {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(255, 228, 170, .48), transparent 30%),
+        radial-gradient(circle at 82% 28%, rgba(180, 235, 255, .48), transparent 30%),
+        radial-gradient(circle at 55% 88%, rgba(218, 200, 255, .35), transparent 34%),
+        linear-gradient(155deg, var(--bg1), var(--bg2));
+      transition: filter 420ms ease, background 600ms ease;
+    }
+
+    #playground::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(255,255,255,.18), rgba(255,255,255,0));
+    }
+
+    .hint {
+      position: absolute;
+      left: 50%;
+      top: calc(50% - 10px);
+      transform: translate(-50%, -50%);
+      color: rgba(36, 48, 68, .48);
+      font-size: clamp(20px, 5vw, 32px);
+      font-weight: 800;
+      letter-spacing: .08em;
+      white-space: nowrap;
+      pointer-events: none;
+      animation: breathe 1.8s ease-in-out infinite;
+      transition: opacity 300ms ease, transform 300ms ease;
+    }
+
+    .hint.hidden {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.9);
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.07); }
+    }
+
+    .bubble {
+      position: absolute;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(.05);
+      opacity: .96;
+      pointer-events: none;
+      box-shadow:
+        inset 0 0 0 5px rgba(255,255,255,.34),
+        0 14px 35px rgba(37, 55, 85, .10);
+      animation: pop 920ms cubic-bezier(.16,.85,.25,1) forwards;
+      display: grid;
+      place-items: center;
+    }
+
+    .bubble .face {
+      transform: scale(.68);
+      opacity: .9;
+      font-size: 42%;
+      filter: saturate(.85);
+    }
+
+    @keyframes pop {
+      0% { transform: translate(-50%, -50%) scale(.05); opacity: .1; }
+      26% { transform: translate(-50%, -50%) scale(1.05); opacity: .98; }
+      72% { transform: translate(-50%, -54%) scale(.94); opacity: .9; }
+      100% { transform: translate(-50%, -72%) scale(1.16); opacity: 0; }
+    }
+
+    .spark {
+      position: absolute;
+      transform: translate(-50%, -50%) scale(.4) rotate(0deg);
+      pointer-events: none;
+      font-size: clamp(22px, 8vw, 42px);
+      animation: fly 900ms cubic-bezier(.12,.72,.22,1) forwards;
+      will-change: transform, opacity;
+    }
+
+    @keyframes fly {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(.35) rotate(0deg); }
+      16% { opacity: 1; }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.05) rotate(var(--rot));
+      }
+    }
+
+    .ring {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 7px solid rgba(255,255,255,.9);
+      transform: translate(-50%, -50%) scale(.2);
+      pointer-events: none;
+      animation: ring 650ms ease-out forwards;
+    }
+
+    @keyframes ring {
+      to { transform: translate(-50%, -50%) scale(4.2); opacity: 0; border-width: 2px; }
+    }
+
+    .rainbow {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 130vmax;
+      height: 130vmax;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(.05);
+      pointer-events: none;
+      opacity: 0;
+      background: conic-gradient(
+        #ff7a8c, #ffb65e, #ffe36a, #78d997,
+        #6ec8ff, #8d8cff, #d98bff, #ff7a8c
+      );
+      -webkit-mask: radial-gradient(circle, transparent 0 43%, #000 44% 52%, transparent 53%);
+      mask: radial-gradient(circle, transparent 0 43%, #000 44% 52%, transparent 53%);
+      animation: rainbow 1100ms ease-out forwards;
+    }
+
+    @keyframes rainbow {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(.05) rotate(-18deg); }
+      25% { opacity: .85; }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1) rotate(16deg); }
+    }
+
+    .corner-note {
+      position: absolute;
+      right: max(12px, env(safe-area-inset-right));
+      bottom: max(10px, env(safe-area-inset-bottom));
+      color: rgba(36,48,68,.20);
+      font-size: 11px;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+
+    #drawCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .bubble,.spark,.ring,.rainbow,.hint,.corner-note { z-index: 2; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hint, .bubble, .spark, .ring, .rainbow { animation-duration: 1ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main id="playground" aria-label="タッチして遊ぶ画面">
+    <canvas id="drawCanvas" aria-hidden="true"></canvas>
+    <div id="hint" class="hint">タッチしてみて</div>
+    <div class="corner-note">ぽんぽんタッチ</div>
+  </main>
+
+  <script>
+    (() => {
+      const playground = document.getElementById('playground');
+      const hint = document.getElementById('hint');
+      const canvas = document.getElementById('drawCanvas');
+      const ctx = canvas.getContext('2d');
+      let drawing = false;
+      let lastPoint = null;
+      let strokeHue = 0;
+      function resizeCanvas(){
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(innerWidth*dpr);
+        canvas.height = Math.round(innerHeight*dpr);
+        canvas.style.width = innerWidth+'px';
+        canvas.style.height = innerHeight+'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        ctx.lineCap='round'; ctx.lineJoin='round';
+      }
+      resizeCanvas();
+      addEventListener('resize', resizeCanvas);
+      const colors = [
+        '#ff788c', '#ffad5c', '#ffd95e', '#72d39b',
+        '#62c5f4', '#7b8ff5', '#b78aee', '#ed8bc4'
+      ];
+      const faces = ['●', '★', '♥', '♪', '☀', '✦'];
+      const sparks = ['★', '●', '♥', '✦'];
+      const notes = [523.25, 587.33, 659.25, 783.99, 880.00];
+
+      let audioCtx = null;
+      let master = null;
+      let taps = 0;
+      let lastToneAt = 0;
+      let activeTones = 0;
+
+      const random = (min, max) => Math.random() * (max - min) + min;
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+      function ensureAudio() {
+        if (!audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContext) return;
+          audioCtx = new AudioContext();
+          master = audioCtx.createGain();
+          master.gain.value = 0.22;
+          master.connect(audioCtx.destination);
+        }
+        try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch(e) {}
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+      }
+
+      function playTone() {
+        if (!audioCtx || !master) return;
+        const nowMs = performance.now();
+        if (nowMs - lastToneAt < 70 || activeTones >= 3) return;
+        lastToneAt = nowMs;
+        activeTones++;
+
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = Math.random() > .45 ? 'sine' : 'triangle';
+        osc.frequency.value = pick(notes);
+        filter.type = 'lowpass';
+        filter.frequency.value = 1800;
+
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(0.65, now + 0.012);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(master);
+        osc.start(now);
+        osc.stop(now + 0.20);
+        osc.onended = () => { activeTones = Math.max(0, activeTones - 1); };
+      }
+
+      function addBubble(x, y) {
+        const size = Math.min(random(105, 190), Math.min(innerWidth, innerHeight) * .42);
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        bubble.style.left = `${x}px`;
+        bubble.style.top = `${y}px`;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.background = pick(colors);
+
+        const face = document.createElement('div');
+        face.className = 'face';
+        face.textContent = pick(faces);
+        face.style.color = 'rgba(255,255,255,.88)';
+        bubble.appendChild(face);
+
+        playground.appendChild(bubble);
+        bubble.addEventListener('animationend', () => bubble.remove(), { once: true });
+      }
+
+      function addRing(x, y) {
+        const ring = document.createElement('div');
+        ring.className = 'ring';
+        ring.style.left = `${x}px`;
+        ring.style.top = `${y}px`;
+        playground.appendChild(ring);
+        ring.addEventListener('animationend', () => ring.remove(), { once: true });
+      }
+
+      function addSparks(x, y) {
+        const count = Math.floor(random(3, 6));
+        for (let i = 0; i < count; i++) {
+          const spark = document.createElement('div');
+          spark.className = 'spark';
+          spark.textContent = pick(sparks);
+          spark.style.left = `${x}px`;
+          spark.style.top = `${y}px`;
+          spark.style.color = pick(colors);
+          spark.style.setProperty('--dx', `${random(-115, 115)}px`);
+          spark.style.setProperty('--dy', `${random(-150, -65)}px`);
+          spark.style.setProperty('--rot', `${random(-140, 140)}deg`);
+          playground.appendChild(spark);
+          spark.addEventListener('animationend', () => spark.remove(), { once: true });
+        }
+      }
+
+      function celebrate() {
+        const r = document.createElement('div');
+        r.className = 'rainbow';
+        playground.appendChild(r);
+        r.addEventListener('animationend', () => r.remove(), { once: true });
+        playground.animate(
+          [
+            { filter: 'saturate(1)' },
+            { filter: 'saturate(1.14) brightness(1.03)' },
+            { filter: 'saturate(1)' }
+          ],
+          { duration: 700, easing: 'ease-out' }
+        );
+      }
+
+      function touch(x, y) {
+        ensureAudio();
+        playTone();
+        taps++;
+        hint.classList.add('hidden');
+        addBubble(x, y);
+        addRing(x, y);
+        addSparks(x, y);
+        if (taps % 8 === 0) celebrate();
+      }
+
+      playground.addEventListener('pointerdown', e => {
+        e.preventDefault();
+        drawing = true;
+        strokeHue = (strokeHue + 47) % 360;
+        lastPoint = {x:e.clientX,y:e.clientY};
+        touch(e.clientX, e.clientY);
+        try { playground.setPointerCapture(e.pointerId); } catch(_) {}
+      }, { passive: false });
+
+      playground.addEventListener('pointermove', e => {
+        if(!drawing || !lastPoint) return;
+        e.preventDefault();
+        const x=e.clientX, y=e.clientY;
+        ctx.strokeStyle=`hsla(${strokeHue},88%,62%,.78)`;
+        ctx.lineWidth=Math.max(9, Math.min(innerWidth,innerHeight)*.022);
+        ctx.beginPath(); ctx.moveTo(lastPoint.x,lastPoint.y); ctx.lineTo(x,y); ctx.stroke();
+        lastPoint={x,y};
+      }, {passive:false});
+      const stopDraw=()=>{drawing=false;lastPoint=null;};
+      playground.addEventListener('pointerup', stopDraw);
+      playground.addEventListener('pointercancel', stopDraw);
+      playground.addEventListener('lostpointercapture', stopDraw);
+
+      playground.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('gesturestart', e => e.preventDefault(), { passive: false });
+      document.addEventListener('selectstart', e => e.preventDefault());
+
+      if ('serviceWorker' in navigator) { window.addEventListener('load',()=>navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{})); }
+    })();
+  </script>
+</body>
+</html>
