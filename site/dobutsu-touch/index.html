@@ -15,7 +15,7 @@
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff9f2;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
     body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:none}
     .app{min-height:100dvh;height:100dvh;padding:max(16px,env(safe-area-inset-top)) 14px max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;background:linear-gradient(180deg,#fffaf5 0%,#f8fdff 100%);touch-action:none}
-    h1{margin:0 0 10px;text-align:center;font-size:clamp(22px,6vw,30px);color:#6f665f;letter-spacing:.03em}
+    h1{margin:0 0 10px;text-align:center;font-size:clamp(22px,6vw,30px);color:#6f665f;letter-spacing:.03em}.home-back{position:absolute;left:max(10px,env(safe-area-inset-left));top:max(10px,env(safe-area-inset-top));z-index:20;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.88);box-shadow:0 3px 10px rgba(80,70,60,.12);color:#6f665f;font-size:34px;line-height:40px;font-weight:500;display:grid;place-items:center;padding:0;touch-action:manipulation}
     .grid{flex:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(4,minmax(0,1fr));gap:10px;min-height:0}
     .animal{border:0;border-radius:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 5px 14px rgba(80,70,60,.08);font:inherit;touch-action:manipulation;transition:transform .08s ease}
     .animal:active{transform:scale(.98)}
@@ -45,6 +45,7 @@
 </head>
 <body data-version="22">
   <main class="app" oncontextmenu="return false">
+    <button class="home-back" type="button" aria-label="トップに戻る" onclick="location.href='../'">‹</button>
     <h1>どうぶつタッチ</h1>
     <section class="grid" id="grid" aria-label="どうぶつをタッチしてあそぶ"></section>
     <div class="hint">どうぶつをタッチしてみて</div>
