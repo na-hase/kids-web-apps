@@ -3,6 +3,7 @@
 子ども向けWebアプリを公開するためのリポジトリです。
 
 - `/dobutsu-touch/` — どうぶつタッチ
+- `/dobutsu-dokokana/` — どうぶつどこかな？
 - `/ponpon-touch/` — ぽんぽんタッチ
 - `/piano-touch/` — ピアノタッチ
 
