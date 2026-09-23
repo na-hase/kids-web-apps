@@ -18,190 +18,244 @@ html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:no
 body{position:fixed;inset:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
 button{font:inherit}
 .app{position:absolute;inset:0;display:flex;flex-direction:column;padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));background:linear-gradient(180deg,#bfe9ff 0%,#eaf9ff 48%,#b8e794 48%,#8fd06f 100%)}
-.top{position:relative;z-index:10;min-height:52px;display:flex;align-items:center;justify-content:center}
+.top{position:relative;z-index:20;min-height:52px;display:flex;align-items:center;justify-content:center}
 .home-back{position:absolute;left:0;top:0;width:46px;height:46px;border:0;border-radius:50%;background:rgba(255,255,255,.92);box-shadow:0 4px 12px rgba(55,80,100,.12);color:#5c6670;font-size:34px;line-height:40px;display:grid;place-items:center;padding:0}
 .title{font-size:clamp(21px,5.8vw,30px);font-weight:900;color:#53606b}
-.question{z-index:8;margin:4px auto 8px;padding:11px 22px;border-radius:999px;background:rgba(255,255,255,.94);box-shadow:0 7px 20px rgba(67,93,112,.13);font-size:clamp(21px,5.8vw,30px);font-weight:900;color:#59636b;text-align:center}
-.scene{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:32px;background:linear-gradient(180deg,#a8e4ff 0%,#e7faff 52%,#b7e993 52%,#8fd06f 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.34)}
-.sun{position:absolute;right:7%;top:6%;width:62px;height:62px;border-radius:50%;background:#ffd85e;box-shadow:0 0 0 10px rgba(255,226,107,.22)}
-.cloud{position:absolute;width:92px;height:28px;border-radius:20px;background:rgba(255,255,255,.8)}
+.status{z-index:15;margin:3px auto 8px;min-width:min(360px,88%);padding:10px 20px;border-radius:999px;background:rgba(255,255,255,.95);box-shadow:0 6px 18px rgba(67,93,112,.13);font-size:clamp(20px,5.5vw,29px);font-weight:900;color:#59636b;text-align:center}
+.scene{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:32px;background:linear-gradient(180deg,#a8e4ff 0%,#e7faff 46%,#b7e993 46%,#8fd06f 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.34)}
+.sun{position:absolute;right:6%;top:5%;width:58px;height:58px;border-radius:50%;background:#ffd85e;box-shadow:0 0 0 9px rgba(255,226,107,.22)}
+.cloud{position:absolute;width:90px;height:27px;border-radius:20px;background:rgba(255,255,255,.8)}
 .cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}
-.cloud:before{width:42px;height:42px;left:13px;bottom:0}.cloud:after{width:52px;height:52px;right:10px;bottom:0}
-.c1{left:7%;top:9%;transform:scale(.78)}.c2{left:45%;top:5%;transform:scale(.54)}
-.hill{position:absolute;left:-15%;right:-15%;bottom:-25%;height:52%;border-radius:50%;background:rgba(77,162,60,.18)}
-.hide-button{position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);width:min(82vw,410px);height:min(58vh,440px);border:0;background:transparent;padding:0;touch-action:manipulation}
-.animal{position:absolute;z-index:2;left:50%;bottom:25%;transform:translateX(-50%) translateY(18%) scale(.92);font-size:clamp(105px,31vw,175px);line-height:1;filter:drop-shadow(0 7px 5px rgba(45,60,50,.16));transition:transform .38s cubic-bezier(.2,.9,.25,1.15)}
-.cover{position:absolute;z-index:3;left:50%;bottom:4%;transform:translateX(-50%);width:78%;height:48%}
-.hide-button.revealed .animal{z-index:5;transform:translateX(-50%) translateY(-46%) scale(1.12)}
-.bush{border-radius:52% 52% 30% 30%;background:#4faa54;box-shadow:52px -20px 0 #62bd62,-52px -14px 0 #69c269,inset 0 -14px rgba(47,123,54,.13)}
-.bush:after{content:"";position:absolute;left:18%;top:18%;width:13px;height:13px;border-radius:50%;background:#fff1a0;box-shadow:95px 16px 0 #f7dc55,38px -8px 0 #f8b4bf}
-.hay{border-radius:28px;background:#e3b340;box-shadow:inset 0 -13px rgba(161,118,27,.12)}
-.hay:before,.hay:after{content:"";position:absolute;left:11%;right:11%;height:9px;border-radius:10px;background:#c79128}
-.hay:before{top:27%}.hay:after{top:62%}
-.box{height:44%;border-radius:10px 10px 24px 24px;background:#c98b56;box-shadow:inset -14px -10px rgba(112,70,39,.12)}
-.box:before{content:"";position:absolute;left:0;right:0;top:16%;height:8px;background:#a96e42}
+.cloud:before{width:40px;height:40px;left:13px;bottom:0}.cloud:after{width:50px;height:50px;right:10px;bottom:0}
+.c1{left:6%;top:8%;transform:scale(.72)}.c2{left:46%;top:4%;transform:scale(.52)}
+.runner{position:absolute;z-index:8;left:50%;top:25%;transform:translate(-50%,-50%);font-size:clamp(76px,22vw,118px);line-height:1;filter:drop-shadow(0 6px 4px rgba(45,60,50,.16));pointer-events:none;opacity:0}
+.runner.ready{opacity:1;animation:hello .45s cubic-bezier(.2,.8,.25,1)}
+@keyframes hello{0%{transform:translate(-50%,-50%) scale(.65)}65%{transform:translate(-50%,-56%) scale(1.1)}100%{transform:translate(-50%,-50%) scale(1)}}
+.spots{position:absolute;left:3%;right:3%;bottom:5%;height:50%;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:8px 12px}
+.spot{position:relative;border:0;background:rgba(255,255,255,.06);border-radius:28px;padding:0;overflow:visible;touch-action:manipulation}
+.spot.disabled{pointer-events:none}
+.spot.wrong{animation:wrong .34s ease}
+@keyframes wrong{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.cover{position:absolute;z-index:10;left:50%;bottom:7%;transform:translateX(-50%);width:76%;height:63%;pointer-events:none}
+.hidden-animal{position:absolute;z-index:6;left:50%;bottom:26%;transform:translateX(-50%) translateY(24%) scale(.86);font-size:clamp(58px,18vw,94px);line-height:1;opacity:0;filter:drop-shadow(0 5px 4px rgba(45,60,50,.14));transition:opacity .12s,transform .4s cubic-bezier(.2,.9,.25,1.12)}
+.spot.correct{z-index:15}
+.spot.correct .hidden-animal{z-index:14;opacity:1;transform:translateX(-50%) translateY(-52%) scale(1.18)}
+.tree-trunk{width:38%;height:70%;border-radius:11px;background:#98653d;box-shadow:inset -8px 0 rgba(91,54,32,.12)}
+.tree-top{bottom:40%;width:78%;height:56%;border-radius:50%;background:#55ae56;box-shadow:35px 9px 0 #67bf62,-30px 13px 0 #6bc765}
+.bush{border-radius:52% 52% 28% 28%;background:#4faa54;box-shadow:32px -14px 0 #62bd62,-31px -10px 0 #69c269,inset 0 -10px rgba(47,123,54,.13)}
+.bush:after{content:"";position:absolute;left:18%;top:20%;width:10px;height:10px;border-radius:50%;background:#fff1a0;box-shadow:62px 10px 0 #f7dc55,30px -7px 0 #f8b4bf}
+.hay{height:55%;border-radius:20px;background:#e3b340;box-shadow:inset 0 -10px rgba(161,118,27,.12)}
+.hay:before,.hay:after{content:"";position:absolute;left:10%;right:10%;height:7px;border-radius:10px;background:#c79128}
+.hay:before{top:27%}.hay:after{top:61%}
+.box{height:56%;border-radius:9px 9px 20px 20px;background:#c98b56;box-shadow:inset -10px -8px rgba(112,70,39,.12)}
+.box:before{content:"";position:absolute;left:0;right:0;top:16%;height:7px;background:#a96e42}
 .box:after{content:"";position:absolute;left:46%;top:0;width:8%;height:100%;background:rgba(241,213,163,.45)}
-.name-card{position:absolute;z-index:12;left:50%;top:24%;transform:translate(-50%,-50%) scale(.75);min-width:190px;padding:13px 23px;border-radius:28px;background:rgba(255,255,255,.97);box-shadow:0 10px 28px rgba(58,86,70,.18);font-size:clamp(27px,8vw,42px);font-weight:900;color:#f1844b;text-align:center;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
-.name-card.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
-.hint{position:absolute;z-index:9;left:50%;bottom:18px;transform:translateX(-50%);padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.87);font-size:clamp(16px,4.5vw,21px);font-weight:800;color:#67736b;white-space:nowrap;box-shadow:0 5px 15px rgba(60,85,70,.1)}
-.spark{position:absolute;z-index:20;left:50%;top:45%;font-size:28px;pointer-events:none;animation:spark .8s ease-out forwards}
-@keyframes spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.15) rotate(18deg)}}
+.label{position:absolute;z-index:12;left:50%;bottom:-1px;transform:translateX(-50%);padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.85);font-size:clamp(12px,3.4vw,16px);font-weight:800;color:#687168;white-space:nowrap;pointer-events:none}
+.result{position:absolute;z-index:30;left:50%;top:31%;transform:translate(-50%,-50%) scale(.78);padding:13px 22px;border-radius:28px;background:rgba(255,255,255,.97);box-shadow:0 10px 28px rgba(58,86,70,.18);font-size:clamp(27px,8vw,40px);font-weight:900;color:#f1844b;text-align:center;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;white-space:nowrap}
+.result.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.spark{position:absolute;z-index:35;left:50%;top:48%;font-size:27px;pointer-events:none;animation:spark .8s ease-out forwards}
+@keyframes spark{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}20%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.12) rotate(18deg)}}
 @media (orientation:landscape){
  .app{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:max(6px,env(safe-area-inset-bottom))}
  .top{min-height:42px}.home-back{width:40px;height:40px;font-size:30px}.title{font-size:21px}
- .question{position:absolute;z-index:20;left:50%;top:max(5px,env(safe-area-inset-top));transform:translateX(-50%);margin:0;padding:7px 19px;font-size:21px}
- .scene{margin-top:2px}.hide-button{width:min(48vw,430px);height:82%}
- .animal{font-size:clamp(88px,24vh,145px)}.hint{bottom:10px;font-size:16px}.name-card{top:20%;font-size:30px}
+ .status{position:absolute;z-index:25;left:50%;top:max(5px,env(safe-area-inset-top));transform:translateX(-50%);margin:0;padding:7px 18px;font-size:20px}
+ .scene{margin-top:2px}.runner{top:23%;font-size:clamp(70px,22vh,110px)}
+ .spots{left:8%;right:8%;bottom:3%;height:58%;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr;gap:12px}
+ .cover{width:82%;height:65%}.hidden-animal{font-size:clamp(52px,16vh,82px)}.label{font-size:12px}
+ .result{top:25%;font-size:29px}
 }
-@media (prefers-reduced-motion:reduce){.animal,.name-card,.spark{transition-duration:.01ms!important;animation-duration:.01ms!important}}
+@media (prefers-reduced-motion:reduce){.runner,.spot,.hidden-animal,.spark,.result{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body data-version="2">
+<body data-version="3">
 <main class="app" oncontextmenu="return false">
   <div class="top">
     <button class="home-back" type="button" aria-label="トップに戻る" onclick="location.href='../'">‹</button>
     <div class="title">どうぶつ どこかな？</div>
   </div>
-  <div class="question">だれが かくれてるかな？</div>
+  <div class="status" id="status">みててね！</div>
 
-  <section class="scene" id="scene" aria-label="かくれているどうぶつをタッチする">
-    <div class="sun"></div>
-    <div class="cloud c1"></div>
-    <div class="cloud c2"></div>
-    <div class="hill"></div>
+  <section class="scene" id="scene" aria-label="どうぶつがかくれた場所をあてる">
+    <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="runner" id="runner">🐈</div>
 
-    <button class="hide-button" id="hideButton" type="button" aria-label="かくれているどうぶつ">
-      <span class="animal" id="animal">🐈</span>
-      <span class="cover bush" id="cover"></span>
-    </button>
+    <div class="spots" id="spots">
+      <button class="spot disabled" type="button" data-index="0" aria-label="き">
+        <span class="hidden-animal"></span>
+        <span class="cover tree-trunk"></span><span class="cover tree-top"></span>
+        <span class="label">き</span>
+      </button>
+      <button class="spot disabled" type="button" data-index="1" aria-label="しげみ">
+        <span class="hidden-animal"></span><span class="cover bush"></span>
+        <span class="label">しげみ</span>
+      </button>
+      <button class="spot disabled" type="button" data-index="2" aria-label="わら">
+        <span class="hidden-animal"></span><span class="cover hay"></span>
+        <span class="label">わら</span>
+      </button>
+      <button class="spot disabled" type="button" data-index="3" aria-label="はこ">
+        <span class="hidden-animal"></span><span class="cover box"></span>
+        <span class="label">はこ</span>
+      </button>
+    </div>
 
-    <div class="name-card" id="nameCard">ねこ！</div>
-    <div class="hint" id="hint">どうぶつを タッチしてね</div>
+    <div class="result" id="result">みつけた！</div>
   </section>
 </main>
 
 <script>
 (function(){
   var animals=[
-    {name:"いぬ",icon:"🐕"},
-    {name:"ねこ",icon:"🐈"},
-    {name:"うさぎ",icon:"🐇"},
-    {name:"ぞう",icon:"🐘"},
-    {name:"らいおん",icon:"🦁"},
-    {name:"さる",icon:"🐒"},
-    {name:"うし",icon:"🐄"},
-    {name:"とり",icon:"🐤"}
+    {name:"いぬ",icon:"🐕",sound:"dog.wav"},
+    {name:"ねこ",icon:"🐈",sound:"cat.wav"},
+    {name:"ぞう",icon:"🐘",sound:"elephant.mp3"},
+    {name:"らいおん",icon:"🦁",sound:"lion.wav"},
+    {name:"さる",icon:"🐒",sound:"monkey.wav"},
+    {name:"うし",icon:"🐄",sound:"cow.wav"},
+    {name:"とり",icon:"🐤",sound:"bird.wav"}
   ];
-  var covers=["bush","hay","box"];
-  var hideButton=document.getElementById("hideButton");
-  var animalEl=document.getElementById("animal");
-  var coverEl=document.getElementById("cover");
-  var nameCard=document.getElementById("nameCard");
-  var hint=document.getElementById("hint");
+  var spots=Array.prototype.slice.call(document.querySelectorAll(".spot"));
+  var runner=document.getElementById("runner");
+  var status=document.getElementById("status");
+  var result=document.getElementById("result");
   var scene=document.getElementById("scene");
   var current=null;
-  var lastIndex=-1;
-  var locked=false;
-  var audioCtx=null;
-
-  function ensureAudio(){
-    try{
-      if(!audioCtx){
-        var C=window.AudioContext||window.webkitAudioContext;
-        if(C) audioCtx=new C();
-      }
-      if(audioCtx&&audioCtx.state==="suspended") audioCtx.resume();
-    }catch(e){}
-  }
+  var targetIndex=0;
+  var lastAnimal=-1;
+  var lastSpot=-1;
+  var phase="showing";
+  var soundCache={};
 
   function speak(text){
     try{
       if(!("speechSynthesis" in window)) return;
       window.speechSynthesis.cancel();
       var u=new SpeechSynthesisUtterance(text);
-      u.lang="ja-JP";
-      u.rate=.82;
-      u.pitch=1.12;
-      u.volume=1;
+      u.lang="ja-JP";u.rate=.83;u.pitch=1.12;u.volume=1;
       window.speechSynthesis.speak(u);
     }catch(e){}
   }
 
-  function chime(){
+  function playCry(animal){
     try{
-      ensureAudio();
-      if(!audioCtx) return;
-      var now=audioCtx.currentTime;
-      [523.25,659.25,783.99].forEach(function(f,i){
-        var o=audioCtx.createOscillator();
-        var g=audioCtx.createGain();
-        o.type="sine";o.frequency.value=f;
-        g.gain.setValueAtTime(.0001,now+i*.075);
-        g.gain.exponentialRampToValueAtTime(.13,now+i*.075+.015);
-        g.gain.exponentialRampToValueAtTime(.0001,now+i*.075+.23);
-        o.connect(g);g.connect(audioCtx.destination);
-        o.start(now+i*.075);o.stop(now+i*.075+.25);
-      });
+      var src="../dobutsu-touch/audio/"+animal.sound;
+      var a=soundCache[animal.name]||(soundCache[animal.name]=new Audio(src));
+      a.pause();a.currentTime=0;a.volume=1;
+      var p=a.play();if(p&&p.catch)p.catch(function(){});
     }catch(e){}
   }
 
-  function sparkle(){
-    var pts=[[-80,-35],[80,-30],[-60,42],[64,44],[0,-75]];
+  function sparkleAt(spot){
+    var sr=scene.getBoundingClientRect();
+    var br=spot.getBoundingClientRect();
+    var x=br.left+br.width/2-sr.left;
+    var y=br.top+br.height*.35-sr.top;
+    var pts=[[-55,-20],[55,-25],[-40,40],[44,38],[0,-55]];
     var chars=["★","✦","●","★","✦"];
     var colors=["#ffd04f","#ff8ea1","#70c9ff","#8fd56d","#ba91ef"];
     pts.forEach(function(p,i){
-      var s=document.createElement("span");
-      s.className="spark";
-      s.textContent=chars[i];
-      s.style.setProperty("--x",p[0]+"px");
-      s.style.setProperty("--y",p[1]+"px");
-      s.style.color=colors[i];
-      scene.appendChild(s);
-      setTimeout(function(){s.remove();},850);
+      var s=document.createElement("span");s.className="spark";s.textContent=chars[i];
+      s.style.left=x+"px";s.style.top=y+"px";
+      s.style.setProperty("--x",p[0]+"px");s.style.setProperty("--y",p[1]+"px");s.style.color=colors[i];
+      scene.appendChild(s);setTimeout(function(){s.remove();},850);
     });
   }
 
-  function nextRound(){
-    locked=false;
-    hideButton.classList.remove("revealed");
-    nameCard.classList.remove("show");
-    hint.textContent="どうぶつを タッチしてね";
-
-    var idx;
-    do{idx=Math.floor(Math.random()*animals.length);}while(idx===lastIndex&&animals.length>1);
-    lastIndex=idx;
-    current=animals[idx];
-
-    animalEl.textContent=current.icon;
-    nameCard.textContent=current.name+"！";
-    hideButton.setAttribute("aria-label",current.name+"がかくれている");
-
-    var coverName=covers[Math.floor(Math.random()*covers.length)];
-    coverEl.className="cover "+coverName;
+  function chooseDifferent(max,last){
+    var n;
+    do{n=Math.floor(Math.random()*max);}while(n===last&&max>1);
+    return n;
   }
 
-  function reveal(){
-    if(locked) return;
-    locked=true;
-    ensureAudio();
-    hideButton.classList.add("revealed");
-    nameCard.classList.add("show");
-    hint.textContent="みつけた！";
-    chime();
-    sparkle();
-    speak(current.name);
-    setTimeout(nextRound,1500);
+  function resetSpots(){
+    spots.forEach(function(spot){
+      spot.classList.remove("correct","wrong");
+      spot.classList.add("disabled");
+      spot.querySelector(".hidden-animal").textContent="";
+    });
   }
 
-  hideButton.addEventListener("pointerdown",function(e){
-    e.preventDefault();
-    reveal();
-  },{passive:false});
+  function startRound(){
+    phase="showing";
+    resetSpots();
+    result.classList.remove("show");
+
+    var ai=chooseDifferent(animals.length,lastAnimal);
+    lastAnimal=ai;current=animals[ai];
+    targetIndex=chooseDifferent(spots.length,lastSpot);
+    lastSpot=targetIndex;
+
+    runner.textContent=current.icon;
+    runner.style.transition="none";
+    runner.style.transform="translate(-50%,-50%)";
+    runner.style.opacity="1";
+    runner.classList.remove("ready");void runner.offsetWidth;runner.classList.add("ready");
+    status.textContent=current.name+"が いるよ！";
+
+    setTimeout(function(){
+      moveToHide();
+    },850);
+  }
+
+  function moveToHide(){
+    var sceneRect=scene.getBoundingClientRect();
+    var spotRect=spots[targetIndex].getBoundingClientRect();
+    var startX=sceneRect.width/2;
+    var startY=sceneRect.height*.25;
+    var endX=spotRect.left+spotRect.width/2-sceneRect.left;
+    var endY=spotRect.top+spotRect.height*.53-sceneRect.top;
+    var dx=endX-startX;
+    var dy=endY-startY;
+
+    status.textContent="どこに かくれるかな？";
+    runner.style.transition="transform 1.05s cubic-bezier(.35,.05,.25,1), opacity .25s linear .82s";
+    runner.style.transform="translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.62)";
+    runner.style.opacity="0";
+
+    setTimeout(function(){
+      phase="guess";
+      runner.classList.remove("ready");
+      spots.forEach(function(s){s.classList.remove("disabled");});
+      status.textContent="どこに かくれた？";
+    },1120);
+  }
+
+  function wrong(spot){
+    spot.classList.remove("wrong");void spot.offsetWidth;spot.classList.add("wrong");
+    status.textContent="もういちど！";
+    speak("もういちど");
+    setTimeout(function(){
+      spot.classList.remove("wrong");
+      if(phase==="guess")status.textContent="どこに かくれた？";
+    },650);
+  }
+
+  function correct(spot){
+    phase="result";
+    spots.forEach(function(s){s.classList.add("disabled");});
+    var hidden=spot.querySelector(".hidden-animal");
+    hidden.textContent=current.icon;
+    spot.classList.add("correct");
+    result.textContent="みつけた！ "+current.name+"！";
+    result.classList.add("show");
+    status.textContent="せいかい！";
+    sparkleAt(spot);
+    playCry(current);
+    setTimeout(function(){speak(current.name);},260);
+    setTimeout(startRound,2100);
+  }
+
+  spots.forEach(function(spot){
+    spot.addEventListener("pointerdown",function(e){
+      e.preventDefault();
+      if(phase!=="guess")return;
+      if(Number(spot.dataset.index)===targetIndex)correct(spot);else wrong(spot);
+    },{passive:false});
+  });
 
   document.addEventListener("touchmove",function(e){e.preventDefault();},{passive:false});
   document.addEventListener("gesturestart",function(e){e.preventDefault();},{passive:false});
-
-  nextRound();
+  setTimeout(startRound,220);
 })();
 </script>
 </body>
