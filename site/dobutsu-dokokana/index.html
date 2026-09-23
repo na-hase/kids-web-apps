@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#bfe9ff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="どうぶつどこかな？">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="../dobutsu-touch/icon-192.png">
+<title>どうぶつどこかな？</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:#bfe9ff;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+body{position:fixed;inset:0;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+button{font:inherit}
+.app{position:absolute;inset:0;display:flex;flex-direction:column;background:linear-gradient(180deg,#bfe9ff 0%,#eaf8ff 42%,#dff4c9 42%,#bfe9a8 100%);padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.top{position:relative;z-index:20;display:flex;align-items:center;justify-content:center;min-height:50px}
+.home-back{position:absolute;left:0;top:0;width:46px;height:46px;border:0;border-radius:50%;background:rgba(255,255,255,.9);box-shadow:0 4px 12px rgba(55,80,100,.12);color:#5c6670;font-size:34px;line-height:40px;display:grid;place-items:center;padding:0}
+.title{font-size:clamp(20px,5.5vw,29px);font-weight:900;color:#53606b;letter-spacing:.03em}
+.question{position:relative;z-index:15;margin:2px auto 8px;width:min(540px,94%);min-height:74px;border-radius:28px;background:rgba(255,255,255,.94);box-shadow:0 7px 20px rgba(67,93,112,.14);display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 64px 10px 16px;color:#4e5961}
+.target-icon{font-size:clamp(36px,10vw,54px);line-height:1}
+.question-text{font-size:clamp(23px,6.5vw,34px);font-weight:900;white-space:nowrap}
+.repeat{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:48px;height:48px;border:0;border-radius:50%;background:#edf8ff;font-size:24px;display:grid;place-items:center}
+.scene{position:relative;flex:1;min-height:0;overflow:hidden;border-radius:32px;background:linear-gradient(180deg,#a9e4ff 0%,#dff7ff 47%,#b7e993 47%,#8fd06f 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.35)}
+.sun{position:absolute;right:5%;top:4%;width:64px;height:64px;border-radius:50%;background:#ffd85e;box-shadow:0 0 0 10px rgba(255,226,107,.22)}
+.cloud{position:absolute;width:90px;height:28px;border-radius:20px;background:rgba(255,255,255,.78)}
+.cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}
+.cloud:before{width:42px;height:42px;left:12px;bottom:0}.cloud:after{width:52px;height:52px;right:10px;bottom:0}
+.c1{left:7%;top:8%;transform:scale(.75)}.c2{left:43%;top:4%;transform:scale(.55)}
+.hill{position:absolute;left:-10%;right:-10%;bottom:-26%;height:55%;border-radius:50%;background:rgba(102,185,74,.25)}
+.spot{position:absolute;border:0;background:transparent;padding:0;margin:0;touch-action:manipulation}
+.spot .animal{position:absolute;z-index:2;font-size:clamp(54px,15vw,88px);line-height:1;filter:drop-shadow(0 4px 3px rgba(45,60,50,.15));transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s}
+.spot .cover{position:absolute;z-index:3}
+.spot.wrong{animation:wiggle .32s ease}
+.spot.correct .animal{transform:translateY(-34%) scale(1.34)!important;z-index:8}
+.spot.correct{z-index:12}
+@keyframes wiggle{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes bounce{0%{transform:translateY(0) scale(.7);opacity:0}45%{transform:translateY(-12px) scale(1.12);opacity:1}100%{transform:translateY(-38px) scale(.9);opacity:0}}
+.s1{left:1%;top:7%;width:34%;height:38%}
+.s1 .animal{right:2%;bottom:12%;transform:translateX(7%)}
+.tree-trunk{left:39%;bottom:0;width:30%;height:58%;border-radius:12px 12px 6px 6px;background:#9b6840;box-shadow:inset -8px 0 rgba(91,54,32,.12)}
+.tree-top{left:12%;top:0;width:78%;height:57%;border-radius:50%;background:#5db85b;box-shadow:20px 8px 0 #68c566,-13px 13px 0 #73c96b}
+.s2{right:1%;top:10%;width:34%;height:32%}
+.s2 .animal{left:8%;bottom:4%;transform:translateY(-4%)}
+.bush{left:4%;right:2%;bottom:0;height:56%;border-radius:50% 50% 26% 26%;background:#4faa54;box-shadow:28px -12px 0 #62bd62,-26px -8px 0 #69c269,inset 0 -10px rgba(47,123,54,.13)}
+.bush:after{content:"";position:absolute;right:19%;top:18%;width:11px;height:11px;border-radius:50%;background:#f7dc55;box-shadow:-45px 6px 0 #fff1a0}
+.s3{left:3%;bottom:4%;width:30%;height:28%}
+.s3 .animal{right:1%;bottom:12%;transform:translateX(5%)}
+.rock{left:2%;right:6%;bottom:0;height:54%;border-radius:58% 48% 24% 27%;background:#98a5ad;box-shadow:inset -13px -8px rgba(95,108,116,.14)}
+.rock:after{content:"";position:absolute;left:18%;top:20%;width:24%;height:15%;border-radius:50%;background:rgba(255,255,255,.2);transform:rotate(-14deg)}
+.s4{right:3%;bottom:3%;width:32%;height:30%}
+.s4 .animal{left:7%;bottom:11%;transform:translateY(-2%)}
+.hay{left:5%;right:2%;bottom:0;height:51%;border-radius:20px;background:#e4b541;box-shadow:inset 0 -9px rgba(161,118,27,.12)}
+.hay:before,.hay:after{content:"";position:absolute;left:12%;right:12%;height:6px;border-radius:8px;background:#c89427}
+.hay:before{top:28%}.hay:after{top:61%}
+.s5{left:34%;bottom:4%;width:32%;height:30%}
+.s5 .animal{left:50%;bottom:18%;transform:translateX(-50%)}
+.fence{left:2%;right:2%;bottom:0;height:48%}
+.fence:before,.fence:after{content:"";position:absolute;left:0;right:0;height:20%;border-radius:8px;background:#c78b57;box-shadow:inset 0 -5px rgba(122,75,42,.1)}
+.fence:before{top:16%}.fence:after{top:58%}
+.post{position:absolute;bottom:0;width:17%;height:100%;border-radius:8px 8px 2px 2px;background:#b97a49;z-index:1}
+.p1{left:10%}.p2{left:42%}.p3{right:9%}
+.spark{position:absolute;z-index:30;left:50%;top:55%;font-size:28px;pointer-events:none;animation:bounce .8s ease-out forwards}
+.message{position:absolute;z-index:25;left:50%;top:44%;transform:translate(-50%,-50%) scale(.8);min-width:min(330px,78%);padding:16px 20px;border-radius:28px;background:rgba(255,255,255,.96);box-shadow:0 12px 30px rgba(57,83,69,.18);text-align:center;font-size:clamp(25px,7vw,38px);font-weight:900;color:#f1844b;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s}
+.message.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.start{position:absolute;z-index:50;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,rgba(191,233,255,.92),rgba(217,246,204,.94));padding:30px}
+.start-card{width:min(420px,90%);border:0;border-radius:38px;background:#fff;padding:30px 22px 26px;box-shadow:0 15px 40px rgba(62,89,96,.16);text-align:center;color:#53606b}
+.start-animals{font-size:clamp(48px,15vw,72px);letter-spacing:-8px;margin-bottom:14px}
+.start-title{font-size:clamp(26px,7vw,36px);font-weight:900;margin-bottom:9px}
+.start-sub{font-size:clamp(16px,4.6vw,21px);font-weight:700;color:#8a9298;margin-bottom:22px}
+.start-button{border:0;border-radius:999px;background:#ffca63;color:#665127;padding:15px 28px;font-size:clamp(22px,6vw,28px);font-weight:900;box-shadow:0 6px 0 #e5a941}
+.start-button:active{transform:translateY(3px);box-shadow:0 3px 0 #e5a941}
+@media (orientation:landscape){
+  .app{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:max(6px,env(safe-area-inset-bottom))}
+  .top{min-height:42px}.home-back{width:40px;height:40px;font-size:30px}.title{font-size:21px}
+  .question{position:absolute;left:50%;top:max(5px,env(safe-area-inset-top));transform:translateX(-50%);width:min(420px,52%);min-height:48px;margin:0;padding:5px 52px 5px 12px;border-radius:22px}
+  .target-icon{font-size:32px}.question-text{font-size:23px}.repeat{width:38px;height:38px;font-size:20px}
+  .scene{margin-top:2px}
+  .spot .animal{font-size:clamp(48px,12vh,72px)}
+  .s1{left:3%;top:3%;width:25%;height:56%}.s2{right:3%;top:5%;width:25%;height:48%}.s3{left:8%;bottom:2%;width:22%;height:38%}.s4{right:8%;bottom:2%;width:22%;height:40%}.s5{left:39%;bottom:2%;width:22%;height:40%}
+}
+@media (prefers-reduced-motion:reduce){.spot,.animal,.spark,.message{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body data-version="1">
+<main class="app" oncontextmenu="return false">
+  <div class="top">
+    <button class="home-back" type="button" aria-label="トップに戻る" onclick="location.href='../'">‹</button>
+    <div class="title">どうぶつ どこかな？</div>
+  </div>
+
+  <section class="question" id="question" aria-live="polite">
+    <span class="target-icon" id="targetIcon">🐈</span>
+    <span class="question-text" id="questionText">ねこは どこ？</span>
+    <button class="repeat" id="repeat" type="button" aria-label="もういちど聞く">🔊</button>
+  </section>
+
+  <section class="scene" id="scene" aria-label="かくれたどうぶつをさがす">
+    <div class="sun"></div><div class="cloud c1"></div><div class="cloud c2"></div><div class="hill"></div>
+
+    <button class="spot s1" type="button" data-slot="0" aria-label="木のところ">
+      <span class="animal"></span><span class="cover tree-trunk"></span><span class="cover tree-top"></span>
+    </button>
+    <button class="spot s2" type="button" data-slot="1" aria-label="しげみのところ">
+      <span class="animal"></span><span class="cover bush"></span>
+    </button>
+    <button class="spot s3" type="button" data-slot="2" aria-label="岩のところ">
+      <span class="animal"></span><span class="cover rock"></span>
+    </button>
+    <button class="spot s4" type="button" data-slot="3" aria-label="わらのところ">
+      <span class="animal"></span><span class="cover hay"></span>
+    </button>
+    <button class="spot s5" type="button" data-slot="4" aria-label="さくのところ">
+      <span class="animal"></span><span class="cover fence"><span class="post p1"></span><span class="post p2"></span><span class="post p3"></span></span>
+    </button>
+
+    <div class="message" id="message">みつけた！</div>
+  </section>
+
+  <div class="start" id="start">
+    <div class="start-card">
+      <div class="start-animals">🐶🐱🐰</div>
+      <div class="start-title">どうぶつ どこかな？</div>
+      <div class="start-sub">かくれている どうぶつを みつけよう</div>
+      <button class="start-button" id="startButton" type="button">タップして はじめる</button>
+    </div>
+  </div>
+</main>
+<script>
+(function(){
+  var animals=[
+    {name:"いぬ",icon:"🐕"},
+    {name:"ねこ",icon:"🐈"},
+    {name:"うさぎ",icon:"🐇"},
+    {name:"ぞう",icon:"🐘"},
+    {name:"らいおん",icon:"🦁"},
+    {name:"さる",icon:"🐒"},
+    {name:"うし",icon:"🐄"},
+    {name:"とり",icon:"🐤"}
+  ];
+  var spots=Array.prototype.slice.call(document.querySelectorAll(".spot"));
+  var targetIcon=document.getElementById("targetIcon");
+  var questionText=document.getElementById("questionText");
+  var repeat=document.getElementById("repeat");
+  var message=document.getElementById("message");
+  var start=document.getElementById("start");
+  var startButton=document.getElementById("startButton");
+  var current=[];
+  var target=null;
+  var locked=false;
+  var audioCtx=null;
+
+  function shuffle(list){
+    var a=list.slice();
+    for(var i=a.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var t=a[i];a[i]=a[j];a[j]=t;
+    }
+    return a;
+  }
+
+  function speak(text){
+    try{
+      if(!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+      var u=new SpeechSynthesisUtterance(text);
+      u.lang="ja-JP";
+      u.rate=.78;
+      u.pitch=1.16;
+      u.volume=1;
+      window.speechSynthesis.speak(u);
+    }catch(e){}
+  }
+
+  function ensureAudio(){
+    try{
+      if(!audioCtx){
+        var C=window.AudioContext||window.webkitAudioContext;
+        if(C) audioCtx=new C();
+      }
+      if(audioCtx&&audioCtx.state==="suspended") audioCtx.resume();
+    }catch(e){}
+  }
+
+  function successTone(){
+    try{
+      ensureAudio();
+      if(!audioCtx) return;
+      var now=audioCtx.currentTime;
+      [523.25,659.25,783.99].forEach(function(f,i){
+        var o=audioCtx.createOscillator();
+        var g=audioCtx.createGain();
+        o.type="sine";o.frequency.value=f;
+        g.gain.setValueAtTime(.0001,now+i*.08);
+        g.gain.exponentialRampToValueAtTime(.14,now+i*.08+.015);
+        g.gain.exponentialRampToValueAtTime(.0001,now+i*.08+.24);
+        o.connect(g);g.connect(audioCtx.destination);
+        o.start(now+i*.08);o.stop(now+i*.08+.26);
+      });
+    }catch(e){}
+  }
+
+  function sparkle(){
+    var chars=["★","✦","●","★","✦"];
+    var pos=[[-70,-15],[70,-20],[-45,35],[50,42],[0,-50]];
+    for(var i=0;i<chars.length;i++){
+      var s=document.createElement("span");
+      s.className="spark";
+      s.textContent=chars[i];
+      s.style.marginLeft=pos[i][0]+"px";
+      s.style.marginTop=pos[i][1]+"px";
+      s.style.color=["#ffd04f","#ff8ea1","#70c9ff","#8fd56d","#ba91ef"][i];
+      document.getElementById("scene").appendChild(s);
+      setTimeout((function(el){return function(){el.remove();};})(s),850);
+    }
+  }
+
+  function setRound(){
+    locked=false;
+    message.classList.remove("show");
+    spots.forEach(function(spot){
+      spot.classList.remove("correct","wrong");
+    });
+    current=shuffle(animals).slice(0,5);
+    target=current[Math.floor(Math.random()*current.length)];
+    spots.forEach(function(spot,i){
+      var a=current[i];
+      spot.dataset.name=a.name;
+      spot.querySelector(".animal").textContent=a.icon;
+      spot.setAttribute("aria-label",a.name+"がかくれている場所");
+    });
+    targetIcon.textContent=target.icon;
+    questionText.textContent=target.name+"は どこ？";
+    setTimeout(function(){speak(target.name+"は どこ？");},130);
+  }
+
+  function handleSpot(spot){
+    if(locked) return;
+    ensureAudio();
+    var name=spot.dataset.name;
+    if(name===target.name){
+      locked=true;
+      spot.classList.add("correct");
+      message.textContent="みつけた！ "+target.name+"！";
+      message.classList.add("show");
+      successTone();
+      sparkle();
+      speak("みつけた！ "+target.name+"！");
+      setTimeout(setRound,1500);
+    }else{
+      spot.classList.remove("wrong");
+      void spot.offsetWidth;
+      spot.classList.add("wrong");
+      var tapped=current[Number(spot.dataset.slot)];
+      if(tapped) speak(tapped.name);
+      setTimeout(function(){spot.classList.remove("wrong");},360);
+    }
+  }
+
+  spots.forEach(function(spot){
+    spot.addEventListener("pointerdown",function(e){
+      e.preventDefault();
+      handleSpot(spot);
+    },{passive:false});
+  });
+
+  repeat.addEventListener("pointerdown",function(e){
+    e.preventDefault();
+    ensureAudio();
+    if(target) speak(target.name+"は どこ？");
+  },{passive:false});
+
+  startButton.addEventListener("pointerdown",function(e){
+    e.preventDefault();
+    ensureAudio();
+    start.style.display="none";
+    setRound();
+  },{passive:false});
+
+  document.addEventListener("touchmove",function(e){e.preventDefault();},{passive:false});
+  document.addEventListener("gesturestart",function(e){e.preventDefault();},{passive:false});
+})();
+</script>
+</body>
+</html>
