@@ -36,7 +36,7 @@ button{font:inherit}
 .spot .animal{position:absolute;z-index:2;font-size:clamp(54px,15vw,88px);line-height:1;filter:drop-shadow(0 4px 3px rgba(45,60,50,.15));transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .2s}
 .spot .cover{position:absolute;z-index:3}
 .spot.wrong{animation:wiggle .32s ease}
-.spot.correct .animal{transform:translateY(-34%) scale(1.34)!important;z-index:8}
+.spot.correct .animal{z-index:8}\n.s1.correct .animal{transform:translateX(7%) translateY(-34%) scale(1.34)!important}\n.s2.correct .animal{transform:translateY(-38%) scale(1.34)!important}\n.s3.correct .animal{transform:translateX(5%) translateY(-34%) scale(1.34)!important}\n.s4.correct .animal{transform:translateY(-36%) scale(1.34)!important}\n.s5.correct .animal{transform:translateX(-50%) translateY(-34%) scale(1.34)!important}
 .spot.correct{z-index:12}
 @keyframes wiggle{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 @keyframes bounce{0%{transform:translateY(0) scale(.7);opacity:0}45%{transform:translateY(-12px) scale(1.12);opacity:1}100%{transform:translateY(-38px) scale(.9);opacity:0}}
