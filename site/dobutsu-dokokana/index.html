@@ -28,18 +28,18 @@ button{font:inherit}
 .cloud:before,.cloud:after{content:"";position:absolute;border-radius:50%;background:inherit}
 .cloud:before{width:40px;height:40px;left:13px;bottom:0}.cloud:after{width:50px;height:50px;right:10px;bottom:0}
 .c1{left:6%;top:8%;transform:scale(.72)}.c2{left:46%;top:4%;transform:scale(.52)}
-.runner{position:absolute;z-index:8;left:50%;top:25%;transform:translate(-50%,-50%);font-size:clamp(76px,22vw,118px);line-height:1;filter:drop-shadow(0 6px 4px rgba(45,60,50,.16));pointer-events:none;opacity:0}
+.runner{position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);font-size:clamp(76px,22vw,118px);line-height:1;filter:drop-shadow(0 6px 4px rgba(45,60,50,.16));pointer-events:none;opacity:0}
 .runner.ready{opacity:1;animation:hello .45s cubic-bezier(.2,.8,.25,1)}
 @keyframes hello{0%{transform:translate(-50%,-50%) scale(.65)}65%{transform:translate(-50%,-56%) scale(1.1)}100%{transform:translate(-50%,-50%) scale(1)}}
-.spots{position:absolute;left:3%;right:3%;bottom:5%;height:50%;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:8px 12px}
-.spot{position:relative;border:0;background:rgba(255,255,255,.06);border-radius:28px;padding:0;overflow:visible;touch-action:manipulation}
+.spots{position:absolute;inset:4% 6%;display:grid;grid-template-columns:repeat(2,min(40%,220px));grid-template-rows:repeat(2,min(37%,200px));place-content:space-between;pointer-events:none}
+.spot{position:relative;border:0;background:rgba(255,255,255,.06);border-radius:28px;padding:0;overflow:visible;pointer-events:auto;touch-action:manipulation}
 .spot.disabled{pointer-events:none}
 .spot.wrong{animation:wrong .34s ease}
 @keyframes wrong{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 .cover{position:absolute;z-index:10;left:50%;bottom:7%;transform:translateX(-50%);width:76%;height:63%;pointer-events:none}
-.hidden-animal{position:absolute;z-index:6;left:50%;bottom:26%;transform:translateX(-50%) translateY(24%) scale(.86);font-size:clamp(58px,18vw,94px);line-height:1;opacity:0;filter:drop-shadow(0 5px 4px rgba(45,60,50,.14));transition:opacity .12s,transform .4s cubic-bezier(.2,.9,.25,1.12)}
+.hidden-animal{position:absolute;z-index:6;left:50%;top:50%;transform:translate(-50%,-15%) scale(.86);font-size:clamp(58px,18vw,94px);line-height:1;opacity:0;filter:drop-shadow(0 5px 4px rgba(45,60,50,.14));transition:opacity .12s,transform .4s cubic-bezier(.2,.9,.25,1.12)}
 .spot.correct{z-index:15}
-.spot.correct .hidden-animal{z-index:14;opacity:1;transform:translateX(-50%) translateY(-52%) scale(1.18)}
+.spot.correct .hidden-animal{z-index:14;opacity:1;transform:translate(-50%,-55%) scale(1.18)}
 .tree-trunk{width:38%;height:70%;border-radius:11px;background:#98653d;box-shadow:inset -8px 0 rgba(91,54,32,.12)}
 .tree-top{bottom:40%;width:78%;height:56%;border-radius:50%;background:#55ae56;box-shadow:35px 9px 0 #67bf62,-30px 13px 0 #6bc765}
 .bush{border-radius:52% 52% 28% 28%;background:#4faa54;box-shadow:32px -14px 0 #62bd62,-31px -10px 0 #69c269,inset 0 -10px rgba(47,123,54,.13)}
@@ -59,15 +59,14 @@ button{font:inherit}
  .app{padding-top:max(6px,env(safe-area-inset-top));padding-bottom:max(6px,env(safe-area-inset-bottom))}
  .top{min-height:42px}.home-back{width:40px;height:40px;font-size:30px}.title{font-size:21px}
  .status{position:absolute;z-index:25;left:50%;top:max(5px,env(safe-area-inset-top));transform:translateX(-50%);margin:0;padding:7px 18px;font-size:20px}
- .scene{margin-top:2px}.runner{top:23%;font-size:clamp(70px,22vh,110px)}
- .spots{left:8%;right:8%;bottom:3%;height:58%;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr;gap:12px}
- .cover{width:82%;height:65%}.hidden-animal{font-size:clamp(52px,16vh,82px)}.label{font-size:12px}
+ .scene{margin-top:2px}.runner{font-size:clamp(70px,22vh,110px)}
+ .cover{width:82%;height:65%}.hidden-animal{font-size:clamp(38px,15vh,82px)}.label{font-size:12px}
  .result{top:25%;font-size:29px}
 }
 @media (prefers-reduced-motion:reduce){.runner,.spot,.hidden-animal,.spark,.result{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
-<body data-version="3">
+<body data-version="4">
 <main class="app" oncontextmenu="return false">
   <div class="top">
     <button class="home-back" type="button" aria-label="トップに戻る" onclick="location.href='../'">‹</button>
@@ -125,6 +124,8 @@ button{font:inherit}
   var lastSpot=-1;
   var phase="showing";
   var soundCache={};
+  var moveDuration=1800;
+  var fadeDuration=280;
 
   function speak(text){
     try{
@@ -199,16 +200,12 @@ button{font:inherit}
 
   function moveToHide(){
     var sceneRect=scene.getBoundingClientRect();
-    var spotRect=spots[targetIndex].getBoundingClientRect();
-    var startX=sceneRect.width/2;
-    var startY=sceneRect.height*.25;
-    var endX=spotRect.left+spotRect.width/2-sceneRect.left;
-    var endY=spotRect.top+spotRect.height*.53-sceneRect.top;
-    var dx=endX-startX;
-    var dy=endY-startY;
+    var coverRect=spots[targetIndex].querySelector(".cover").getBoundingClientRect();
+    var dx=coverRect.left+coverRect.width/2-sceneRect.left-sceneRect.width/2;
+    var dy=coverRect.top+coverRect.height/2-sceneRect.top-sceneRect.height/2;
 
     status.textContent="どこに かくれるかな？";
-    runner.style.transition="transform 1.05s cubic-bezier(.35,.05,.25,1), opacity .25s linear .82s";
+    runner.style.transition="transform "+moveDuration+"ms ease-in-out, opacity "+fadeDuration+"ms linear "+(moveDuration-fadeDuration)+"ms";
     runner.style.transform="translate(calc(-50% + "+dx+"px),calc(-50% + "+dy+"px)) scale(.62)";
     runner.style.opacity="0";
 
@@ -217,7 +214,7 @@ button{font:inherit}
       runner.classList.remove("ready");
       spots.forEach(function(s){s.classList.remove("disabled");});
       status.textContent="どこに かくれた？";
-    },1120);
+    },moveDuration);
   }
 
   function wrong(spot){
